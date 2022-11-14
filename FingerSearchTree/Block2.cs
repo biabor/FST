@@ -2,38 +2,85 @@
 {
     public class Block2
     {
+        /// <summary>
+        /// Pointer to the left block2.
+        /// </summary>
         public Block2 Left { get; set; }
 
+        /// <summary>
+        /// Pointer to the right block2.
+        /// </summary>
         public Block2 Right { get; set; }
 
+        /// <summary>
+        /// Pointer to the mate block2.
+        /// </summary>
         public Block2 Mate { get; set; }
 
+        /// <summary>
+        /// Pointer to the node which contains this block2.
+        /// </summary>
         public Node Node { get; set; }
 
+        /// <summary>
+        /// Pointer to the first child-block2.
+        /// </summary>
         public Block1 First { get; set; }
 
+        /// <summary>
+        /// Pointer to the last child-block2
+        /// </summary>
         public Block1 Last { get; set; }
 
+        /// <summary>
+        /// The degree of this block2.
+        /// </summary>
         public int Degree { get; set; } = 0;
 
+        /// <summary>
+        /// Says if the block2 is full or not.
+        /// </summary>
         public bool IsFull { get => Node.Group.IsSplitGroup ? Degree >= Bounds.BiP(Node.Level) : Degree >= Bounds.Fi(Node.Level); }
 
+        /// <summary>
+        /// Indicates whether this block2 is pending.
+        /// </summary>
         public bool Pending { get; set; }
 
+        /// <summary>
+        /// The smallest value in this block2.
+        /// </summary>
         public int Min { get => First == null ? int.MaxValue : First.Min; }
 
+        /// <summary>
+        /// The largest value in this block2.
+        /// </summary>
         public int Max { get => Last == null ? int.MinValue : Last.Max; }
 
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        /// <param name="node">The father of this block2.</param>
         public Block2(Node node)
         {
             Node = node;
         }
 
+        /// <summary>
+        /// Indicates if this block2 could contain the value.
+        /// </summary>
+        /// <param name="value">The value we are searching for.</param>
+        /// <returns>true, if it could contain the value, false otherwise.</returns>
         internal bool ContainsValue(int value)
         {
             return Min <= value && value <= Max;
         }
 
+        /// <summary>
+        /// Searches for the child-node in this block2 that could contain the value.
+        /// </summary>
+        /// <param name="value">The value we are searching for.</param>
+        /// <returns>The node that could contain the value, or the largest one with a smaller value.</returns>
         internal Node FindChildContaining(int value)
         {
             if (value > Max)
@@ -54,6 +101,12 @@
             return Last.FindChildContaining(value);
         }
 
+        /// <summary>
+        /// Adds block1 middle in this block2, immediately to the right of leftP or immedialty to the left of rightP.
+        /// </summary>
+        /// <param name="leftP">The block1 that should be to the left.</param>
+        /// <param name="middle">The block1 that we are inserting.</param>
+        /// <param name="rightP">The block1 that should be to the right.</param>
         internal void Add(Block1 leftP, Block1 middle, Block1 rightP)
         {
             middle.Father = this;
@@ -86,6 +139,10 @@
             Node.Group.Degree += middle.Degree;
         }
 
+        /// <summary>
+        /// Removes the block1 middle from the blocks contained in this block2.
+        /// </summary>
+        /// <param name="middle">The block1 that is going to be removed.</param>
         internal void Remove(Block1 middle)
         {
             if (middle == Last)
@@ -114,6 +171,9 @@
             }
         }
 
+        /// <summary>
+        /// Transfers a child node from this block2 to the mate.
+        /// </summary>
         internal void TransferToMate()
         {
             if (Mate.First == null || Mate.Last == null)
@@ -219,6 +279,10 @@
             }
         }
 
+        /// <summary>
+        /// Transfers a child-block1 from this block2 to the to-block2.
+        /// </summary>
+        /// <param name="to">The block2 we are transferring to.</param>
         internal void Transfer(Block2 to)
         {
             if (Right == to)
@@ -249,6 +313,10 @@
             }
         }
 
+        /// <summary>
+        /// Indicates whether ir will be possible to break the block2 pair while keeping the invariant that all the nodes in a group belong to the same block1 mentaind.
+        /// </summary>
+        /// <returns>True, if it is possible to break the pair, false otherwise.</returns>
         internal bool IsBreakPossible()
         {
             if (Mate == Right)

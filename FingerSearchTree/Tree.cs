@@ -1,9 +1,12 @@
-﻿using System.Text.RegularExpressions;
-
-namespace FingerSearchTree
+﻿namespace FingerSearchTree
 {
     public static class Tree
     {
+        /// <summary>
+        /// Creates an initial tree containing int.MinValue as a leaf, and one father node as the root, 
+        /// each of them being in their own singleton component/group.
+        /// </summary>
+        /// <returns>The leaf with int.MinValue.</returns>
         public static Leaf CreateTree()
         {
             Node root = new Node(1);
@@ -11,13 +14,19 @@ namespace FingerSearchTree
             Block1 block1 = new Block1(block2);
             Leaf leaf = new Leaf(block1, int.MinValue);
 
-            block1.Add(null, leaf, null);
-            block2.Add(null, block1, null);
             root.Add(null, block2, null);
+            block2.Add(null, block1, null);
+            block1.Add(null, leaf, null);
 
             return leaf;
         }
 
+        /// <summary>
+        /// Searches for the leaf with the given value starting at the leaf given as a parameter.
+        /// </summary>
+        /// <param name="lastLeaf">The starting point for the search.</param>
+        /// <param name="value">The value to be searched.</param>
+        /// <returns>The leaf containing the given value, or the one that is to the left, if the leaf is not found.</returns>
         public static Leaf Search(Leaf lastLeaf, int value)
         {
             Node temp = lastLeaf;
@@ -40,6 +49,12 @@ namespace FingerSearchTree
             return temp as Leaf;
         }
 
+        /// <summary>
+        /// Inserts the given value imediately to the right of the parameter leaf.
+        /// </summary>
+        /// <param name="left">The leaf indicating the position the value is going to be inserted.</param>
+        /// <param name="value">The value to be inserted.</param>
+        /// <returns>The new inserted leaf that contains the given value.</returns>
         public static Leaf Insert(Leaf left, int value)
         {
             Leaf newLeaf = new Leaf(left.Father, value);
@@ -71,6 +86,11 @@ namespace FingerSearchTree
             return newLeaf;
         }
 
+        /// <summary>
+        /// Deletes the leaf given as parameter from the tree.
+        /// </summary>
+        /// <param name="leaf">The leaf to be deleted.</param>
+        /// <returns>The leaf to the left of the one deleted.</returns>
         public static Leaf Delete(Leaf leaf)
         {
             DeleteNode(leaf);
@@ -121,6 +141,11 @@ namespace FingerSearchTree
             return leaf.Left as Leaf;
         }
 
+        /// <summary>
+        /// Adds a new node to the right of the left node inside its father node by updating the necesary blocks1,2 
+        /// </summary>
+        /// <param name="left">The node indicating where the new node needs to be inserted.</param>
+        /// <param name="newNode">The node that is going to be inserted.</param>
         internal static void AddNode(Node left, Node newNode)
         {
             bool wasFullBlock1 = left.Father.IsFull;
@@ -218,6 +243,10 @@ namespace FingerSearchTree
             }
         }
 
+        /// <summary>
+        /// Deletes the node from its father node by updating the necesary blocks1,2
+        /// </summary>
+        /// <param name="node"></param>
         internal static void DeleteNode(Node node)
         {
             bool wasFatherFull = node.Father.IsFull;
@@ -324,6 +353,10 @@ namespace FingerSearchTree
             }
         }
 
+        /// <summary>
+        /// Finished the rebalancing steps on the node given as a parameter and performs a rebalancing operation on its father.
+        /// </summary>
+        /// <param name="father">The node that finished its rebalancing operation.</param>
         internal static void Rebalance(Node father)
         {
             Node r = father.Component.Root;

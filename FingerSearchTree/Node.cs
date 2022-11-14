@@ -2,20 +2,45 @@
 {
     public class Node
     {
+        /// <summary>
+        /// Pointer to the left adjacent node.
+        /// </summary>
         public Node Left { get; set; }
 
+        /// <summary>
+        /// Pointer to the right adjacent node.
+        /// </summary>
         public Node Right { get; set; }
 
+        /// <summary>
+        /// Pointer to the father block1.
+        /// </summary>
         public Block1 Father { get; set; }
 
+        /// <summary>
+        /// Pointer to the fathernode.
+        /// </summary>
         public Node FatherNode { get => Father?.Father.Node; }
 
+        /// <summary>
+        /// Pointer to the first child block2.
+        /// </summary>
         public Block2 First { get; set; }
 
+        /// <summary>
+        /// Pointer to the last child block2.
+        /// </summary>
         public Block2 Last { get; set; }
 
+        /// <summary>
+        /// Indicates how many blocks2 this node contains.
+        /// </summary>
         public int Blocks2Count { get; set; }
 
+        /// <summary>
+        /// The group this node is contained in. 
+        /// It always points to a valid group in a valid component.
+        /// </summary>
         private Group group_;
         public Group Group
         {
@@ -43,16 +68,35 @@
             set => group_ = value;
         }
 
+        /// <summary>
+        /// Component this group is contained in. 
+        /// It always points to a valid component.
+        /// </summary>
         public Component Component { get => Group.Component; }
 
+        /// <summary>
+        /// The height of this node.
+        /// </summary>
         public int Level { get; internal set; }
 
+        /// <summary>
+        /// The number of child nodes this node contains.
+        /// </summary>
         public int Degree { get; set; } = 0;
 
+        /// <summary>
+        /// The smallest value in the subtree rooted at this node.
+        /// </summary>
         public virtual int Min { get => First == null ? int.MaxValue : First.Min; }
 
+        /// <summary>
+        /// The largest value in the subtree rooted at this node.
+        /// </summary>
         public virtual int Max { get => Last == null ? int.MinValue : Last.Max; }
 
+        /// <summary>
+        /// Indicates if this node contains two or more block2 pairs.
+        /// </summary>
         public bool ContainsAtLeastTwoBlock2Pairs
         {
             get
@@ -71,12 +115,21 @@
             }
         }
 
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        /// <param name="level">The level of this node.</param>
         public Node(int level)
         {
             group_ = new Group(this);
             Level = level;
         }
 
+        /// <summary>
+        /// Indicates if the node could contain the given value.
+        /// </summary>
+        /// <param name="value">The searched value.</param>
+        /// <returns>true, if the value could be in the subtree rooted at this node, false otherwise.</returns>
         internal bool ContainsValue(int value)
         {
             if (Father == null)
@@ -84,6 +137,11 @@
             return Min <= value && value <= Max;
         }
 
+        /// <summary>
+        /// Searches for the child node that contains the parameter value.
+        /// </summary>
+        /// <param name="value">The searched value.</param>
+        /// <returns>The node that contains the value or if it does not exists then the one with the largest value smaller than the one searched.</returns>
         internal Node FindChildContaining(int value)
         {
             if (value > Max)
@@ -102,6 +160,12 @@
             return Last.FindChildContaining(value);
         }
 
+        /// <summary>
+        /// Adds the block2 middle in this node, immediately to the right of leftP or imediately to the left of rightP.
+        /// </summary>
+        /// <param name="leftP">The block2 that is to the left.</param>
+        /// <param name="middle">The block2 to be inserted.</param>
+        /// <param name="rightP">The block2 that is to the right.</param>
         internal void Add(Block2 leftP, Block2 middle, Block2 rightP)
         {
             middle.Node = this;
@@ -134,6 +198,10 @@
             Blocks2Count += 1;
         }
 
+        /// <summary>
+        /// Removes the block2 from this node.
+        /// </summary>
+        /// <param name="middle">The block2 to be removed.</param>
         internal void Remove(Block2 middle)
         {
             if (middle == Last)
@@ -155,6 +223,10 @@
             Blocks2Count -= 1;
         }
 
+        /// <summary>
+        /// Splits this node into two, by moving the rightmost block2 pair in the new node.
+        /// </summary>
+        /// <returns>The new node, that contains the rightmost block2 pair of this one.</returns>
         internal Node Split()
         {
             Node newNode = new Node(Level);
@@ -165,9 +237,9 @@
                 Block2 block2 = new Block2(root);
                 Block1 block1 = new Block1(block2);
 
-                block1.Add(null, this, null);
-                block2.Add(null, block1, null);
                 root.Add(null, block2, null);
+                block2.Add(null, block1, null);
+                block1.Add(null, this, null);
             }
 
             Block2 lastBlock2 = Last;
