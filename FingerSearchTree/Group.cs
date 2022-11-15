@@ -119,7 +119,7 @@
 
                 Node fatherNode = First;
                 what.Father.Remove(what);
-                Tree.DeleteNode(fatherNode);
+                //Tree.DeleteNode(fatherNode);
 
                 Block1? whatNeighbour;
                 if (left)
@@ -153,9 +153,9 @@
                 Block2 what = First.First;
 
                 First.Remove(what);
-                Tree.DeleteNode(First);
+                //Tree.DeleteNode(First);
 
-                if (what.Mate != null && what.Pending == false)
+                if (what.Mate != null)
                     what.Mate.Mate = null;
                 what.Mate = null;
 
@@ -209,7 +209,7 @@
                     from.Remove(transferred);
                     to.Add(to.First?.Left, transferred, to.First);
 
-                    if (transferred.Mate != null && transferred.Mate.Mate == transferred)
+                    if (transferred.Mate?.Mate == transferred)
                         transferred.Mate.Mate = null;
                     transferred.Mate = null;
                     transferred.Pending = false;
@@ -228,7 +228,7 @@
                     from.Remove(transferred);
                     to.Add(to.Last, transferred, to.Last?.Right);
 
-                    if (transferred.Mate != null && transferred.Mate.Mate == transferred)
+                    if (transferred.Mate?.Mate == transferred)
                         transferred.Mate.Mate = null;
                     transferred.Mate = null;
                     transferred.Pending = false;
@@ -257,9 +257,10 @@
             if ((First == null || First != Last) && (g.First == null || g.First != g.Last))
                 return false;
 
-            if (Block2.Node != g.Block2.Node) return false;
+            if (Block2?.Node != g.Block2?.Node) return false;
 
             return (First.Blocks2Count == 1 && g.First.Blocks2Count <= 3) || (g.First.Blocks2Count == 1 && First.Blocks2Count <= 3);
+            return (First.Blocks2Count == 1 && g.First.Blocks2Count > 0 && g.First.Blocks2Count <= 3) || (g.First.Blocks2Count == 1 && First.Blocks2Count > 0 && First.Blocks2Count <= 3);
         }
 
         /// <summary>

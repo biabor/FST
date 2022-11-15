@@ -221,6 +221,11 @@
             Degree -= middle.Degree;
             Group.Degree -= middle.Degree;
             Blocks2Count -= 1;
+
+            if(First==null||Last== null)
+            {
+                Tree.DeleteNode(this);
+            }
         }
 
         /// <summary>
@@ -254,14 +259,14 @@
             newNode.Add(newNode.First?.Left, lastBlock2, newNode.First);
             lastBlock2 = Last;
 
-            if (lastBlock2.Pending == false && lastBlock2.Mate != null && lastBlock2.Mate == newNode.First && lastBlock2.Mate.Mate == lastBlock2)
+            if (lastBlock2.Pending == false && lastBlock2.Mate == newNode.First && lastBlock2.Mate?.Mate == lastBlock2)
             {
                 Remove(lastBlock2);
                 newNode.Add(newNode.First?.Left, lastBlock2, newNode.First);
                 lastBlock2 = Last;
             }
 
-            if (lastBlock2.Pending && lastBlock2.Mate != null && lastBlock2.Mate == newNode.First)
+            if (lastBlock2.Pending)
             {
                 Remove(lastBlock2);
                 newNode.Add(newNode.First?.Left, lastBlock2, newNode.First);

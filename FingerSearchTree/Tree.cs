@@ -73,6 +73,7 @@
             else if (8 * Bounds.Fi(left.FatherNode.Level) < left.FatherNode.Degree)
             {
                 Block2 firstBlock2 = left.Father.Father;
+                if (firstBlock2.Mate != null && firstBlock2.Mate.Degree == 0) firstBlock2.Node.Remove(firstBlock2);
                 Block2? secondBlock2 = firstBlock2.Right ?? firstBlock2.Left;
                 if (secondBlock2 != null)
                     if (secondBlock2.Degree <= firstBlock2.Degree)
@@ -186,11 +187,13 @@
                     {
                         grandfather.Right.Pending = false;
                         grandfather.Mate = grandfather.Right;
+                        grandfather.Right.Mate = grandfather;
                     }
                     else if (grandfather.Left != null && (grandfather.Left.Pending || (grandfather.Left.Mate == null && grandfather.Left.IsFull == false)))
                     {
                         grandfather.Left.Pending = false;
                         grandfather.Mate = grandfather.Left;
+                        grandfather.Left.Mate = grandfather;
                     }
                     else
                     {
@@ -209,6 +212,7 @@
                     if (grandfather.Left != null && grandfather.Left.Pending)
                     {
                         grandfather.Mate = grandfather.Left;
+                        grandfather.Left.Mate = grandfather;
                         grandfather.Pending = false;
                     }
                     else
@@ -217,6 +221,7 @@
                     if (oldMate.Right != null && oldMate.Right.Pending)
                     {
                         oldMate.Mate = oldMate.Right;
+                        oldMate.Right.Mate = oldMate;
                         oldMate.Mate.Pending = false;
                     }
                     else
@@ -227,6 +232,7 @@
                     if (grandfather.Right != null && grandfather.Right.Pending)
                     {
                         grandfather.Mate = grandfather.Right;
+                        grandfather.Right.Mate = grandfather;
                         grandfather.Mate.Pending = false;
                     }
                     else
@@ -235,6 +241,7 @@
                     if (oldMate.Left != null && oldMate.Left.Pending)
                     {
                         oldMate.Mate = oldMate.Left;
+                        oldMate.Left.Mate = oldMate;
                         oldMate.Mate.Pending = false;
                     }
                     else
@@ -246,7 +253,7 @@
         /// <summary>
         /// Deletes the node from its father node by updating the necesary blocks1,2
         /// </summary>
-        /// <param name="node"></param>
+        /// <param name="node">The node to be removed.</param>
         internal static void DeleteNode(Node node)
         {
             bool wasFatherFull = node.Father.IsFull;
@@ -303,7 +310,18 @@
 
                 if (grandfather.Mate != null && grandfather.Mate.First == null && grandfather.Mate.Last == null)
                 {
+                    grandfather.Mate.Node.Remove(grandfather.Mate);
                     grandfather.Mate = null;
+                }
+
+                if (grandfather.Right != null && grandfather.Right.First == null && grandfather.Right.Last == null)
+                {
+                    grandfather.Right.Node.Remove(grandfather.Right);
+                }
+
+                if (grandfather.Left != null && grandfather.Left.First == null && grandfather.Left.Last == null)
+                {
+                    grandfather.Left.Node.Remove(grandfather.Left);
                 }
 
                 if (grandfather.Mate != null && grandfather.Mate.Mate != grandfather)
@@ -447,8 +465,8 @@
                 {
                     if (r.FatherNode.Group.Degree > 8 * Bounds.Fi(r.FatherNode.Level))
                     {
-                        if (r.Group.Block2.Mate != null && r.Group.Block2.Mate.Degree == 0) r.Group.Block2.Mate = null;
-                        Block2? neighbour = r.Group.Block2.Mate ?? r.Group.Block2.Right ?? r.Group.Block2.Left;
+                        if (r.Group.Block2.Mate != null && r.Group.Block2.Mate.Degree == 0) r.Group.Block2.Node.Remove(r.Group.Block2.Mate);
+                        Block2? neighbour = r.Group.Block2.Right ?? r.Group.Block2.Left;
                         if (neighbour != null)
                             if (r.Group.Block2.Degree > neighbour.Degree)
                                 neighbour.Transfer(r.Group.Block2);

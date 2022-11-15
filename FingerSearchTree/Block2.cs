@@ -217,7 +217,7 @@
                     if (to.Mate == null)
                     {
                         to.Mate = new Block1(to.Father) { Mate = to };
-                        Mate.Add(to, to.Mate, to.Right);
+                        to.Father.Add(to, to.Mate, to.Right);
                     }
                     to.TransferToMate();
                 }
@@ -266,7 +266,7 @@
                     if (to.Mate == null)
                     {
                         to.Mate = new Block1(to.Father) { Mate = to };
-                        Mate.Add(to, to.Mate, to.Right);
+                        to.Father.Add(to, to.Mate, to.Right);
                     }
                     to.TransferToMate();
                 }
@@ -276,6 +276,13 @@
                     to.Mate.Mate = null;
                     to.Mate = null;
                 }
+            }
+
+            if (Degree == 0 || First == null || Last == null)
+            {
+                if (Mate != null)
+                    Mate.Mate = null;
+                Mate = null;
             }
         }
 
@@ -310,6 +317,13 @@
                     Remove(transferred);
                     to.Add(to.Last, transferred, to.Last?.Right);
                 }
+            }
+
+            if (Degree == 0 || First == null || Last == null)
+            {
+                if (Mate != null)
+                    Mate.Mate = null;
+                Mate = null;
             }
         }
 

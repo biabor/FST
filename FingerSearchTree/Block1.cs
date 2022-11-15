@@ -208,6 +208,13 @@
                 Remove(transferredNode);
                 Mate.Add(Mate.Last, transferredNode, Mate.Last?.Right);
             }
+
+            if (Degree == 0 || First == null || Last == null)
+            {
+                if (Mate != null)
+                    Mate.Mate = null;
+                Mate = null;
+            }
         }
     }
 }
